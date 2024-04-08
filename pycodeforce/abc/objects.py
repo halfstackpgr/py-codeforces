@@ -605,24 +605,30 @@ class RanklistRow(msgspec.Struct):
     """
 
 
+Res = t.Union[
+    User,
+    Member,
+    BlogEntry,
+    Comment,
+    RecentAction,
+    RatingChange,
+    Contest,
+    Party,
+    Problem,
+    ProblemStatistics,
+    Submission,
+    Hack,
+    ProblemResult,
+    RanklistRow,
+]
+
+
 class InteractionResponse(msgspec.Struct):
-    stuats: str
+    status: str
     result: t.Optional[
         t.Union[
-            User,
-            Member,
-            BlogEntry,
-            Comment,
-            RecentAction,
-            RatingChange,
-            Contest,
-            Party,
-            Problem,
-            ProblemStatistics,
-            Submission,
-            Hack,
-            ProblemResult,
-            RanklistRow,
+            t.List[t.Dict[str, t.Optional[t.Union[str, int, bool]]]],
+            t.Dict[str, t.Optional[t.Union[str, int, bool]]],
         ]
-    ] = None
+    ]
     comment: t.Optional[str] = None

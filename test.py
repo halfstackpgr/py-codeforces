@@ -9,8 +9,8 @@ import time
 
 async def main():
     ld = AsyncMethod(auth_key=API, unix_time=int(time.time()), secret=SECRET)
-    await ld.get_user_info(handles="halfstackpgr", check_historic_handles=False)
-    await ld._client.close()
+    await ld.get_user(handles="halfstackpgr", check_historic_handles=False)
+    await ld.close()
 
 
 asyncio.run(main=main())

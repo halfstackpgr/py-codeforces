@@ -1,8 +1,7 @@
-from pycodeforce.__clients__ import AsyncClient, SyncClient
+from pycodeforce.clients import AsyncClient
 from pycodeforce.abc.endpoints import CodeforcesAPI
-from pycodeforce.abc.objects import User
+from pycodeforce.abc.objects import InteractionResponse, User
 import time
-import aiohttp
 import msgspec
 import random
 import typing as t
@@ -41,13 +40,38 @@ class AsyncMethod:
             response = await socket.get(url=url)
             return await response.read()
 
-    async def get_user_inro(
+    async def get_user(
         self, handles: str, check_historic_handles: t.Optional[bool] = True
-    ) -> None:
+    ) -> t.Optional[t.List[User]]:
+        list_of_users: t.List[User] = []
         endpoint_url = self._url_generator.user_info(
             handles=handles, check_historic_handles=check_historic_handles
         )
         final_url = self._generate_authorisation(end_point_url=endpoint_url)
-        base = msgspec.json.decode(
-            await self._generate_response(url=final_url), strict=False, type=User
-        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=InteractionResponse,
+            )
+            if base.status is not "FAILED":
+                if isinstance(base.result, t.Dict):
+                    list_of_users.append(
+                        msgspec.json.decode(
+                            (str(base.result)).encode("utf-8"), type=User
+                        )
+                    )
+                if isinstance(base.result, t.List):
+                    for user in base.result:
+                        list_of_users.append(
+                            msgspec.json.decode((str(user)).encode("utf-8"), type=User)
+                        )
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
+
+        return list_of_users
+
+    async def close(self):
+        await self.close()
