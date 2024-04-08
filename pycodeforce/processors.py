@@ -7,7 +7,8 @@ from pycodeforce.abc.objects import (
     Hack,
     Contest,
     RatingChange,
-    Submission
+    Submission,
+    RecentAction,
 )
 from pycodeforce.abc.interactions import (
     UserInteractionResponse,
@@ -19,12 +20,15 @@ from pycodeforce.abc.interactions import (
     ContestStandingResponse,
     ContestStatusResponse,
     ProblemSetProblemsResponse,
-    ProblemSetRecentStatusResponse
+    ProblemSetRecentStatusResponse,
+    RecentActionsResponse,
+    UserBlogEntryResponse,
+    UserFriendResponse,
+    UserRatedListResponse,
+    UserRatingResponse,
+    UserStatusResponse,
 )
-from pycodeforce.abc.cobjects import (
-    Standings,
-    ProblemSetProblems
-)
+from pycodeforce.abc.cobjects import Standings, ProblemSetProblems
 
 
 import time
@@ -252,7 +256,6 @@ class AsyncMethod:
 
         return list_of_contest_rating_change
 
-    ###TODO: add an Given on the documentation to the objects.py file.
     async def get_contest_standings(
         self,
         contest_id: int,
@@ -262,7 +265,13 @@ class AsyncMethod:
         show_unofficial: t.Optional[bool] = True,
     ) -> t.Optional[t.List[Standings]]:
         list_of_contest_standings: t.List[Standings] = []
-        endpoint_url = self._url_generator.contest_standings(contest_id=contest_id, as_manager=as_manager, from_index=from_index, count=count, show_unofficial=show_unofficial)
+        endpoint_url = self._url_generator.contest_standings(
+            contest_id=contest_id,
+            as_manager=as_manager,
+            from_index=from_index,
+            count=count,
+            show_unofficial=show_unofficial,
+        )
         final_url = self._generate_authorisation(
             method_name="contest.standings", end_point_url=endpoint_url
         )
@@ -292,9 +301,15 @@ class AsyncMethod:
         handle: t.Optional[str] = None,
         from_index: int = 1,
         count: int = 10,
-    )->t.Optional[t.List[Submission]]:
+    ) -> t.Optional[t.List[Submission]]:
         list_of_contest_status: t.List[Submission] = []
-        endpoint_url = self._url_generator.contest_status(contest_id=contest_id, as_manager=as_manager,handle=handle, from_index=from_index, count=count)
+        endpoint_url = self._url_generator.contest_status(
+            contest_id=contest_id,
+            as_manager=as_manager,
+            handle=handle,
+            from_index=from_index,
+            count=count,
+        )
         final_url = self._generate_authorisation(
             method_name="contest.status", end_point_url=endpoint_url
         )
@@ -315,15 +330,14 @@ class AsyncMethod:
             raise e
 
         return list_of_contest_status
-        
 
     async def get_problemset_problems(
-        self,
-        tags: str | None = None, 
-        problemset_name: str | None = None
-    )->t.Optional[t.List[ProblemSetProblems]]:
+        self, tags: str | None = None, problemset_name: str | None = None
+    ) -> t.Optional[t.List[ProblemSetProblems]]:
         list_of_problemset_problems: t.List[ProblemSetProblems] = []
-        endpoint_url = self._url_generator.problemset_problems(tags=tags, problemset_name=problemset_name)
+        endpoint_url = self._url_generator.problemset_problems(
+            tags=tags, problemset_name=problemset_name
+        )
         final_url = self._generate_authorisation(
             method_name="problemset.problems", end_point_url=endpoint_url
         )
@@ -344,15 +358,14 @@ class AsyncMethod:
             raise e
 
         return list_of_problemset_problems
-    
 
     async def get_problemset_recent_status(
-        self,
-        count: int,
-        problemset_name: str | None = None
-    )->t.Optional[t.List[Submission]]:
+        self, count: int, problemset_name: str | None = None
+    ) -> t.Optional[t.List[Submission]]:
         list_of_problemset_recent_status: t.List[Submission] = []
-        endpoint_url = self._url_generator.problemset_recent_status(count=count, problemset_name=problemset_name)
+        endpoint_url = self._url_generator.problemset_recent_status(
+            count=count, problemset_name=problemset_name
+        )
         final_url = self._generate_authorisation(
             method_name="problemset.recentStatus", end_point_url=endpoint_url
         )
@@ -374,20 +387,166 @@ class AsyncMethod:
 
         return list_of_problemset_recent_status
 
+    async def get_recent_actions(
+        self, max_count: int
+    ) -> t.Optional[t.List[RecentAction]]:
+        list_of_recent_actions: t.List[RecentAction] = []
+        endpoint_url = self._url_generator.recent_actions(max_count=max_count)
+        final_url = self._generate_authorisation(
+            method_name="recentActions", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=RecentActionsResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_recent_actions = base.result
+                if isinstance(base.result, RecentAction):
+                    list_of_recent_actions.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
 
-    
+        return list_of_recent_actions
 
-        
+    async def get_user_blog_entries(self, handle: str) -> t.Optional[t.List[BlogEntry]]:
+        list_of_user_blog_entries: t.List[BlogEntry] = []
+        endpoint_url = self._url_generator.user_blog_entries(handle=handle)
+        final_url = self._generate_authorisation(
+            method_name="user.blogEntries", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=UserBlogEntryResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_user_blog_entries = base.result
+                if isinstance(base.result, BlogEntry):
+                    list_of_user_blog_entries.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
 
+        return list_of_user_blog_entries
 
+    async def get_user_friends(
+        self, only_online: bool = True
+    ) -> t.Optional[t.List[str]]:
+        list_of_friends: t.List[str] = []
+        endpoint_url = self._url_generator.user_friends(only_online=only_online)
+        final_url = self._generate_authorisation(
+            method_name="user.friends", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=UserFriendResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_friends = base.result
+                if isinstance(base.result, str):
+                    list_of_friends.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
 
+        return list_of_friends
 
+    async def get_user_rated_list(
+        self,
+        active_only: t.Optional[bool] = True,
+        include_retired: t.Optional[bool] = False,
+        contest_id: t.Optional[int] = None,
+    ) -> t.Optional[t.List[User]]:
+        list_of_rated_users: t.List[User] = []
+        endpoint_url = self._url_generator.user_rated_list(
+            active_only=active_only,
+            include_retired=include_retired,
+            contest_id=contest_id,
+        )
+        final_url = self._generate_authorisation(
+            method_name="user.ratedList", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=UserRatedListResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_rated_users = base.result
+                if isinstance(base.result, User):
+                    list_of_rated_users.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
 
+        return list_of_rated_users
 
+    async def get_user_rating(self, handle: str) -> t.Optional[t.List[RatingChange]]:
+        list_of_rating: t.List[RatingChange] = []
+        endpoint_url = self._url_generator.user_rating(handle=handle)
+        final_url = self._generate_authorisation(
+            method_name="user.rating", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=UserRatingResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_rating = base.result
+                if isinstance(base.result, RatingChange):
+                    list_of_rating.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
 
+        return list_of_rating
 
+    async def get_user_status(
+        self, handle: str, from_index: int = 1, count: int = 10
+    ) -> t.Optional[t.List[Submission]]:
+        list_of_submission_status: t.List[Submission] = []
+        endpoint_url = self._url_generator.user_status(
+            handle=handle, from_index=from_index, count=count
+        )
+        final_url = self._generate_authorisation(
+            method_name="user.status", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=UserStatusResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_submission_status = base.result
+                if isinstance(base.result, Submission):
+                    list_of_submission_status.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
+
+        return list_of_submission_status
 
     async def close(self):
         await self._client.close()
-
-
