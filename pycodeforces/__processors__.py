@@ -1,5 +1,5 @@
-from pycodeforce.clients import AsyncClient, SyncClient
-from pycodeforce.abc.endpoints import CodeforcesAPI
+from pycodeforce.__clients__ import AsyncClient, SyncClient
+from pycodeforce.abc.endpoints import CodeForcesAPI
 from pycodeforce.abc.objects import (
     User,
     Comment,
@@ -46,7 +46,7 @@ class AsyncMethod:
         unix_time: t.Optional[int] = None,
         secret: t.Optional[str] = None,
     ) -> None:
-        self._url_generator = CodeforcesAPI()
+        self._url_generator = CodeForcesAPI()
         self._client = AsyncClient()
         self._auth_key = auth_key
         self._secret = secret
@@ -552,22 +552,6 @@ class AsyncMethod:
         await self._client.close()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class SyncMethod:
     def __init__(
         self,
@@ -576,7 +560,7 @@ class SyncMethod:
         unix_time: t.Optional[int] = None,
         secret: t.Optional[str] = None,
     ) -> None:
-        self._url_generator = CodeforcesAPI()
+        self._url_generator = CodeForcesAPI()
         self._client = SyncClient()
         self._auth_key = auth_key
         self._secret = secret
@@ -680,9 +664,7 @@ class SyncMethod:
 
         return list_of_blog_entry_comments
 
-    def get_blog_entry_view(
-        self, blog_entry_id: int
-    ) -> t.Optional[t.List[BlogEntry]]:
+    def get_blog_entry_view(self, blog_entry_id: int) -> t.Optional[t.List[BlogEntry]]:
         list_of_blog_entry: t.List[BlogEntry] = []
         endpoint_url = self._url_generator.blog_entry_view(blog_entry_id=blog_entry_id)
         final_url = self._generate_authorisation(
@@ -917,9 +899,7 @@ class SyncMethod:
 
         return list_of_problemset_recent_status
 
-    def get_recent_actions(
-        self, max_count: int
-    ) -> t.Optional[t.List[RecentAction]]:
+    def get_recent_actions(self, max_count: int) -> t.Optional[t.List[RecentAction]]:
         list_of_recent_actions: t.List[RecentAction] = []
         endpoint_url = self._url_generator.recent_actions(max_count=max_count)
         final_url = self._generate_authorisation(
@@ -967,9 +947,7 @@ class SyncMethod:
 
         return list_of_user_blog_entries
 
-    def get_user_friends(
-        self, only_online: bool = True
-    ) -> t.Optional[t.List[str]]:
+    def get_user_friends(self, only_online: bool = True) -> t.Optional[t.List[str]]:
         list_of_friends: t.List[str] = []
         endpoint_url = self._url_generator.user_friends(only_online=only_online)
         final_url = self._generate_authorisation(
@@ -1077,6 +1055,6 @@ class SyncMethod:
             raise e
 
         return list_of_submission_status
-    
+
     def close(self):
         self._client.close()

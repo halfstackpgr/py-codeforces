@@ -1,7 +1,7 @@
 from typing import Optional
 
 
-class CodeforcesAPI:
+class CodeForcesAPI:
     """A class to generate URL endpoints for Codeforces API."""
 
     def __init__(self) -> None:
