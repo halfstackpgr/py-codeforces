@@ -627,11 +627,26 @@ class InteractionResponse(msgspec.Struct):
     status: str
     comment: t.Optional[str] = None
 
+
 class UserInteractionResponse(InteractionResponse):
     result: t.Optional[t.Union[t.List[User], User]] = None
+
 
 class BlogEntryCommentResponse(InteractionResponse):
     result: t.Optional[t.Union[t.List[Comment], Comment]] = None
 
+
 class BlogEntryViewResponse(InteractionResponse):
     result: t.Optional[t.Union[t.List[BlogEntry], BlogEntry]] = None
+
+
+class ContestHacksResponse(InteractionResponse):
+    result: t.Optional[t.Union[t.List[Hack], Hack]] = None
+
+
+class ContestListResponse(InteractionResponse):
+    result: t.Optional[t.Union[t.List[Contest], Contest]] = None
+
+
+class ContestRatingChangeResponse(InteractionResponse):
+    result: t.Optional[t.Union[t.List[RatingChange], RatingChange]] = None
