@@ -603,3 +603,26 @@ class RanklistRow(msgspec.Struct):
     For IOI contests only. Time in seconds from the start of the contest to the last submission that added some points to the total score of the party.
     Can be absent.
     """
+
+
+class InteractionResponse(msgspec.Struct):
+    stuats: str
+    result: t.Optional[
+        t.Union[
+            User,
+            Member,
+            BlogEntry,
+            Comment,
+            RecentAction,
+            RatingChange,
+            Contest,
+            Party,
+            Problem,
+            ProblemStatistics,
+            Submission,
+            Hack,
+            ProblemResult,
+            RanklistRow,
+        ]
+    ] = None
+    comment: t.Optional[str] = None
