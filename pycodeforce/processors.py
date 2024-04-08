@@ -12,7 +12,7 @@ from pycodeforce.abc.objects import (
     BlogEntry,
     Hack,
     Contest,
-    RatingChange
+    RatingChange,
 )
 import time
 import msgspec
@@ -189,7 +189,7 @@ class AsyncMethod:
 
     async def get_contest_list(
         self, of_gym: t.Optional[bool] = False
-    ) ->t.Optional[t.List[Contest]]:
+    ) -> t.Optional[t.List[Contest]]:
         list_of_contest: t.List[Contest] = []
         endpoint_url = self._url_generator.contest_list(gym=of_gym)
         final_url = self._generate_authorisation(
@@ -213,11 +213,13 @@ class AsyncMethod:
 
         return list_of_contest
 
-    async def get_contest_rating_changes(self, contest_id: int)->t.Optional[t.List[RatingChange]]:
+    async def get_contest_rating_changes(
+        self, contest_id: int
+    ) -> t.Optional[t.List[RatingChange]]:
         list_of_contest_rating_change: t.List[RatingChange] = []
         endpoint_url = self._url_generator.contest_rating_changes(contest_id=contest_id)
         final_url = self._generate_authorisation(
-            method_name="contest.list", end_point_url=endpoint_url
+            method_name="contest.ratingChanges", end_point_url=endpoint_url
         )
         try:
             base = msgspec.json.decode(
@@ -236,6 +238,18 @@ class AsyncMethod:
             raise e
 
         return list_of_contest_rating_change
+
+    ###TODO: add an Given on the documentation to the objects.py file.
+    async def get_contest_standings(
+        self,
+        contest_id: int,
+        as_manager: t.Optional[bool] = False,
+        from_index: int = 1,
+        count: int = 5,
+        show_unofficial: t.Optional[bool] = True,
+    ) -> t.Optional[t.List[RatingChange]]:
+        ...
+
 
     async def close(self):
         await self._client.close()
