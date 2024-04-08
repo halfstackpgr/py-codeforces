@@ -1,6 +1,12 @@
 from pycodeforce.clients import AsyncClient
 from pycodeforce.abc.endpoints import CodeforcesAPI
-from pycodeforce.abc.objects import InteractionResponse, User
+from pycodeforce.abc.objects import (
+    UserInteractionResponse, 
+    BlogEntryResponse,
+    User,
+    BlogEntry
+    
+)
 import time
 import msgspec
 import random
@@ -23,6 +29,7 @@ class AsyncMethod:
 
     def _generate_authorisation(self, end_point_url: str) -> str:
         methodial = end_point_url.removeprefix("https://codeforces.com/api/")
+        print(methodial)
         auth_url = f"{methodial}?"
         if self._time is None:
             self._time = int(time.time())
@@ -30,8 +37,11 @@ class AsyncMethod:
         auth_url += f"apiKey={self._auth_key}&time={self._time}&apiSig={rand_num}/"
         auth_url += methodial
         auth_url += f"?apiKey={self._auth_key}&time={self._time}#{self._secret}"
-        hash_object = hashlib.sha512(auth_url.encode("utf-8"))
+        print(auth_url.encode("utf-8"))
+        hash_object = hashlib.sha512(auth_url.encode("utf-8"), usedforsecurity=False)
+        
         hex_dig = hash_object.hexdigest()
+
         auth_url = f"https://codeforces.com/api/{methodial}?apiKey={self._auth_key}&time={self._time}&apiSig={rand_num}{hex_dig}"
         return auth_url
 
@@ -52,20 +62,13 @@ class AsyncMethod:
             base = msgspec.json.decode(
                 await self._generate_response(url=final_url),
                 strict=False,
-                type=InteractionResponse,
+                type=UserInteractionResponse,
             )
-            if base.status is not "FAILED":
-                if isinstance(base.result, t.Dict):
-                    list_of_users.append(
-                        msgspec.json.decode(
-                            (str(base.result)).encode("utf-8"), type=User
-                        )
-                    )
+            if base.status != "FAILED":
                 if isinstance(base.result, t.List):
-                    for user in base.result:
-                        list_of_users.append(
-                            msgspec.json.decode((str(user)).encode("utf-8"), type=User)
-                        )
+                    list_of_users = base.result
+                if isinstance(base.result, User):
+                    list_of_users.append(base.result)
             else:
                 raise Exception(base.comment)
         except Exception as e:
@@ -73,5 +76,34 @@ class AsyncMethod:
 
         return list_of_users
 
+    
+    async def get_blog_entry_comments(
+        self, blog_entry_id: int
+        ) -> t.Optional[t.List[BlogEntry]]:
+        list_of_blog_entry_comments: t.List[BlogEntry] = []
+        endpoint_url = self._url_generator.blog_entry_comments(blog_entry_id=blog_entry_id)
+        print(endpoint_url)
+        final_url = self._generate_authorisation(end_point_url=endpoint_url)
+        print(final_url)
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=BlogEntryResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_blog_entry_comments = base.result
+                if isinstance(base.result, BlogEntry):
+                    list_of_blog_entry_comments.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
+
+        return list_of_blog_entry_comments
+    
     async def close(self):
-        await self.close()
+        await self._client.close()
+
+

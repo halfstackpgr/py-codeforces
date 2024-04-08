@@ -625,10 +625,10 @@ Res = t.Union[
 
 class InteractionResponse(msgspec.Struct):
     status: str
-    result: t.Optional[
-        t.Union[
-            t.List[t.Dict[str, t.Optional[t.Union[str, int, bool]]]],
-            t.Dict[str, t.Optional[t.Union[str, int, bool]]],
-        ]
-    ]
     comment: t.Optional[str] = None
+
+class UserInteractionResponse(InteractionResponse):
+    result: t.Optional[t.Union[t.List[User], User]] = None
+
+class BlogEntryResponse(InteractionResponse):
+    result: t.Optional[t.Union[t.List[BlogEntry], BlogEntry]] = None
