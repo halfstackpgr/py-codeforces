@@ -562,7 +562,7 @@ class ProblemResult(msgspec.Struct):
     """Number of seconds after the start of the contest before the submission, that brought maximal amount of points for this problem. Can be absent."""
 
 
-class RanklistRow(msgspec.Struct):
+class RankListRow(msgspec.Struct):
     """
     Represents a ranklist row.
 
@@ -603,50 +603,3 @@ class RanklistRow(msgspec.Struct):
     For IOI contests only. Time in seconds from the start of the contest to the last submission that added some points to the total score of the party.
     Can be absent.
     """
-
-
-Res = t.Union[
-    User,
-    Member,
-    BlogEntry,
-    Comment,
-    RecentAction,
-    RatingChange,
-    Contest,
-    Party,
-    Problem,
-    ProblemStatistics,
-    Submission,
-    Hack,
-    ProblemResult,
-    RanklistRow,
-]
-
-
-class InteractionResponse(msgspec.Struct):
-    status: str
-    comment: t.Optional[str] = None
-
-
-class UserInteractionResponse(InteractionResponse):
-    result: t.Optional[t.Union[t.List[User], User]] = None
-
-
-class BlogEntryCommentResponse(InteractionResponse):
-    result: t.Optional[t.Union[t.List[Comment], Comment]] = None
-
-
-class BlogEntryViewResponse(InteractionResponse):
-    result: t.Optional[t.Union[t.List[BlogEntry], BlogEntry]] = None
-
-
-class ContestHacksResponse(InteractionResponse):
-    result: t.Optional[t.Union[t.List[Hack], Hack]] = None
-
-
-class ContestListResponse(InteractionResponse):
-    result: t.Optional[t.Union[t.List[Contest], Contest]] = None
-
-
-class ContestRatingChangeResponse(InteractionResponse):
-    result: t.Optional[t.Union[t.List[RatingChange], RatingChange]] = None

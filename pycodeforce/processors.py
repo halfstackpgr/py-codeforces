@@ -1,19 +1,32 @@
 from pycodeforce.clients import AsyncClient
 from pycodeforce.abc.endpoints import CodeforcesAPI
 from pycodeforce.abc.objects import (
-    UserInteractionResponse,
-    BlogEntryCommentResponse,
-    BlogEntryViewResponse,
-    ContestHacksResponse,
-    ContestListResponse,
-    ContestRatingChangeResponse,
     User,
     Comment,
     BlogEntry,
     Hack,
     Contest,
     RatingChange,
+    Submission
 )
+from pycodeforce.abc.interactions import (
+    UserInteractionResponse,
+    BlogEntryCommentResponse,
+    BlogEntryViewResponse,
+    ContestHacksResponse,
+    ContestListResponse,
+    ContestRatingChangeResponse,
+    ContestStandingResponse,
+    ContestStatusResponse,
+    ProblemSetProblemsResponse,
+    ProblemSetRecentStatusResponse
+)
+from pycodeforce.abc.cobjects import (
+    Standings,
+    ProblemSetProblems
+)
+
+
 import time
 import msgspec
 import random
@@ -247,9 +260,134 @@ class AsyncMethod:
         from_index: int = 1,
         count: int = 5,
         show_unofficial: t.Optional[bool] = True,
-    ) -> t.Optional[t.List[RatingChange]]:
+    ) -> t.Optional[t.List[Standings]]:
+        list_of_contest_standings: t.List[Standings] = []
+        endpoint_url = self._url_generator.contest_standings(contest_id=contest_id, as_manager=as_manager, from_index=from_index, count=count, show_unofficial=show_unofficial)
+        final_url = self._generate_authorisation(
+            method_name="contest.standings", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=ContestStandingResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_contest_standings = base.result
+                if isinstance(base.result, Standings):
+                    list_of_contest_standings.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
+
+        return list_of_contest_standings
         ...
+
+    async def get_contest_status(
+        self,
+        contest_id: int,
+        as_manager: t.Optional[bool] = False,
+        handle: t.Optional[str] = None,
+        from_index: int = 1,
+        count: int = 10,
+    )->t.Optional[t.List[Submission]]:
+        list_of_contest_status: t.List[Submission] = []
+        endpoint_url = self._url_generator.contest_status(contest_id=contest_id, as_manager=as_manager,handle=handle, from_index=from_index, count=count)
+        final_url = self._generate_authorisation(
+            method_name="contest.status", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=ContestStatusResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_contest_status = base.result
+                if isinstance(base.result, Submission):
+                    list_of_contest_status.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
+
+        return list_of_contest_status
+        
+
+    async def get_problemset_problems(
+        self,
+        tags: str | None = None, 
+        problemset_name: str | None = None
+    )->t.Optional[t.List[ProblemSetProblems]]:
+        list_of_problemset_problems: t.List[ProblemSetProblems] = []
+        endpoint_url = self._url_generator.problemset_problems(tags=tags, problemset_name=problemset_name)
+        final_url = self._generate_authorisation(
+            method_name="problemset.problems", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=ProblemSetProblemsResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_problemset_problems = base.result
+                if isinstance(base.result, ProblemSetProblems):
+                    list_of_problemset_problems.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
+
+        return list_of_problemset_problems
+    
+
+    async def get_problemset_recent_status(
+        self,
+        count: int,
+        problemset_name: str | None = None
+    )->t.Optional[t.List[Submission]]:
+        list_of_problemset_recent_status: t.List[Submission] = []
+        endpoint_url = self._url_generator.problemset_recent_status(count=count, problemset_name=problemset_name)
+        final_url = self._generate_authorisation(
+            method_name="problemset.recentStatus", end_point_url=endpoint_url
+        )
+        try:
+            base = msgspec.json.decode(
+                await self._generate_response(url=final_url),
+                strict=False,
+                type=ProblemSetRecentStatusResponse,
+            )
+            if base.status != "FAILED":
+                if isinstance(base.result, t.List):
+                    list_of_problemset_recent_status = base.result
+                if isinstance(base.result, Submission):
+                    list_of_problemset_recent_status.append(base.result)
+            else:
+                raise Exception(base.comment)
+        except Exception as e:
+            raise e
+
+        return list_of_problemset_recent_status
+
+
+    
+
+        
+
+
+
+
+
+
+
 
 
     async def close(self):
         await self._client.close()
+
+
