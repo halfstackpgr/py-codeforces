@@ -6,7 +6,7 @@ import aiohttp
 import msgspec
 import random
 import typing as t
-from hashlib import sha512
+import hashlib
 
 
 class AsyncMethod:
@@ -24,32 +24,19 @@ class AsyncMethod:
 
     def _generate_authorisation(
         self,
-        method_name: t.Literal[
-            "blogEntry.comments",
-            "blogEntry.view",
-            "contest.hacks",
-            "contest.list",
-            "contest.ratingChanges",
-            "contest.standings",
-            "contest.status",
-            "problemset.problems",
-            "problemset.recentStatus",
-            "recentActions",
-            "user.blogEntries",
-            "user.friends",
-            "user.info",
-            "user.ratedList",
-            "user.rating",
-            "user.status",
-        ],
+        end_point_url: str
     ) -> str:
-        auth_url = ""
-        auth_url += f"&apiKey={self._auth_key}"
+        methodial = end_point_url.removeprefix("https://codeforces.com/api/")
+        auth_url = f"{methodial}?"
         if self._time is None:
             self._time = int(time.time())
-        auth_url += f"&time={self._time}"
-        auth_url += f"&apiSig={random.randint(000000, 999999)}"
-        auth_url += str(sha512(auth_url.encode("utf-8")))
+        rand_num = str(random.randint(100000, 999999))
+        auth_url += f"apiKey={self._auth_key}&time={self._time}&apiSig={rand_num}/"
+        auth_url += methodial
+        auth_url += f"?apiKey={self._auth_key}&time={self._time}#{self._secret}"
+        hash_object = hashlib.sha512(auth_url.encode('utf-8'))
+        hex_dig = hash_object.hexdigest()
+        auth_url = f"https://codeforces.com/api/{methodial}?apiKey={self._auth_key}&time={self._time}&apiSig={rand_num}{hex_dig}"
         return auth_url
 
     async def _generate_response(self, url: str) -> aiohttp.ClientResponse:
@@ -59,10 +46,9 @@ class AsyncMethod:
 
     async def get_user_inro(
         self, handles: str, check_historic_handles: t.Optional[bool] = True
-    ) -> User:
+    ) ->None:
         endpoint_url = self._url_generator.user_info(
             handles=handles, check_historic_handles=check_historic_handles
         )
-        if self._auth_context is not "":
-            endpoint_url += self._auth_context
-        # generate_response = await self._generate_response(url=endpoint_url)
+        final_url = self._generate_authorisation(end_point_url=endpoint_url)
+        base = msgspec.json.decode
