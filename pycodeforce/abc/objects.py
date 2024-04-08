@@ -630,5 +630,8 @@ class InteractionResponse(msgspec.Struct):
 class UserInteractionResponse(InteractionResponse):
     result: t.Optional[t.Union[t.List[User], User]] = None
 
-class BlogEntryResponse(InteractionResponse):
+class BlogEntryCommentResponse(InteractionResponse):
+    result: t.Optional[t.Union[t.List[Comment], Comment]] = None
+
+class BlogEntryViewResponse(InteractionResponse):
     result: t.Optional[t.Union[t.List[BlogEntry], BlogEntry]] = None

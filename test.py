@@ -9,10 +9,10 @@ import time
 
 async def main():
     ld = AsyncMethod(auth_key=API, unix_time=int(time.time()), secret=SECRET)
-    users = await ld.get_blog_entry_comments(blog_entry_id=127719)
+    users = await ld.get_user(handles="ecnerwala ", check_historic_handles=False)
     if users is not None:
         for user in users:
-            print(user.content)
+            print(user.rating)
     await ld.close()
 
 
