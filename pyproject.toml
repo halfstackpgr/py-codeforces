@@ -57,3 +57,6 @@ push = true
     "{pep440_version}",
 ]
 
+[tool.type]
+safe = true
+
