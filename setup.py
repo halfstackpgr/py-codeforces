@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name="py-codeforces",
+    name="pycodeforces",
     packages=["py-codeforces"],
     version="1.0dev",
     license="GPL 3.0",
