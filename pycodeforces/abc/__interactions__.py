@@ -1,6 +1,6 @@
 import msgspec
 import typing as t
-from pycodeforce.abc.objects import (
+from pycodeforces.abc.__objects__ import (
     User,
     Comment,
     BlogEntry,
@@ -10,7 +10,7 @@ from pycodeforce.abc.objects import (
     Submission,
     RecentAction,
 )
-from pycodeforce.abc.cobjects import Standings, ProblemSetProblems
+from pycodeforces.abc.__cobjects__ import Standings, ProblemSetProblems
 
 
 class InteractionResponse(msgspec.Struct):

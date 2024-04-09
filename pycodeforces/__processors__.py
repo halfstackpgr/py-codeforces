@@ -1,6 +1,6 @@
-from pycodeforce.__clients__ import AsyncClient, SyncClient
-from pycodeforce.abc.endpoints import CodeForcesAPI
-from pycodeforce.abc.objects import (
+from pycodeforces.__clients__ import AsyncClient, SyncClient
+from pycodeforces.abc.__endpoints__ import CodeForcesAPI
+from pycodeforces.abc.__objects__ import (
     User,
     Comment,
     BlogEntry,
@@ -10,7 +10,7 @@ from pycodeforce.abc.objects import (
     Submission,
     RecentAction,
 )
-from pycodeforce.abc.interactions import (
+from pycodeforces.abc.__interactions__ import (
     UserInteractionResponse,
     BlogEntryCommentResponse,
     BlogEntryViewResponse,
@@ -28,7 +28,7 @@ from pycodeforce.abc.interactions import (
     UserRatingResponse,
     UserStatusResponse,
 )
-from pycodeforce.abc.cobjects import Standings, ProblemSetProblems
+from pycodeforces.abc.__cobjects__ import Standings, ProblemSetProblems
 
 
 import time
