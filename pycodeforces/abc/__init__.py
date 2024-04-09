@@ -3,8 +3,8 @@ ABCs for those who love the way code-linting works.
 """
 
 __all__ = [
-    "CodeForcesAPI", 
-    "User", 
+    "CodeForcesAPI",
+    "User",
     "Comment",
     "BlogEntry",
     "Hack",
@@ -28,9 +28,9 @@ __all__ = [
     "UserRatedListResponse",
     "UserRatingResponse",
     "UserStatusResponse",
-    "Standings", 
-    "ProblemSetProblems"
-    ]
+    "Standings",
+    "ProblemSetProblems",
+]
 
 from pycodeforces.abc.__endpoints__ import CodeForcesAPI
 from pycodeforces.abc.__objects__ import (
@@ -62,4 +62,3 @@ from pycodeforces.abc.__interactions__ import (
     UserStatusResponse,
 )
 from pycodeforces.abc.__cobjects__ import Standings, ProblemSetProblems
-

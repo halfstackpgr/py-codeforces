@@ -1,0 +1,33 @@
+# pyproject.toml
+
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-codeforce"
+version = "1.0dev"
+description = "Py-Codeforces is a high-performance and type-safe Python library designed for seamless interaction with Codeforces. It offers both asynchronous and synchronous client handlers, allowing developers to choose the appropriate method based on their requirements."
+readme = "README.md"
+authors = [{ name = "halfstackpgr", email = "halfstackpgr@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: GPL 3.0 License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["python", "codeforces", "api", "wrapper", "async", "sync"]
+dependencies = [
+    "aiohttp",
+    "requests",
+    "msgspec",
+    'tomli; python_version < "3.11"',
+]
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = ["ruff", "codespell", "flake8", "mypy"]
+
+[project.urls]
+Homepage = "https://github.com/halfstackpgr/py-codeforces"
+

@@ -1,14 +1,14 @@
 """
 ## Py-Codeforces
 
-Py-Codeforces is a high-performance and type-safe Python library designed for seamless interaction with Codeforces. It offers both asynchronous and synchronous client handlers, allowing developers to choose the appropriate method based on their requirements. 
+Py-Codeforces is a high-performance and type-safe Python library designed for seamless interaction with Codeforces. It offers both asynchronous and synchronous client handlers, allowing developers to choose the appropriate method based on their requirements.
 
 Key Features:
-1. ### Client Handlers: 
+1. ### Client Handlers:
    - Synchronous Handler: `SyncMethod`
    - Asynchronous Handler: `AsyncMethod`
-   
-2. ### Functionality: 
+
+2. ### Functionality:
    Both client handlers offer the same set of functionalities, ensuring consistency and flexibility in usage.
 
 3. ### Authentication:
@@ -27,7 +27,7 @@ import pycodeforces
 
 async def main():
     api = pycodeforces.AsyncMethod()
-    users = await api.get_user_info(handles="DmitriyH;Fefer_Ivan") 
+    users = await api.get_user_info(handles="DmitriyH;Fefer_Ivan")
     # use `;` to add multiple parameters.
     async for user in users:
         print(user.avatar)
@@ -75,4 +75,3 @@ __all__ = ["AsyncMethod", "SyncMethod", "AsyncClient", "SyncClient"]
 
 from pycodeforces.__processors__ import AsyncMethod, SyncMethod
 from pycodeforces.__clients__ import AsyncClient, SyncClient
-
