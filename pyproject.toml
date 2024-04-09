@@ -12,7 +12,7 @@ readme = "README.md"
 authors = [{ name = "halfstackpgr", email = "halfstackpgr@gmail.com" }]
 license = { file = "LICENSE" }
 classifiers = [
-    "License :: OSI Approved :: GPL 3.0 License",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]

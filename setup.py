@@ -17,7 +17,7 @@ setup(
         'tomli; python_version < "3.11"',
     ],
     classifiers=[
-        "License :: OSI Approved :: GPL 3.0 License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Development Status :: 1 - Alpha/Unstable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
