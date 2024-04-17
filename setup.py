@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="py-codeforces",
     packages=["pycodeforces", "pycodeforces.abc"],
-    version="1.1dev",
+    version="1.3",
     license="GPL 3.0",
     description="Py-Codeforces is a high-performance and type-safe Python library designed for seamless interaction with Codeforces. It offers both asynchronous and synchronous client handlers, allowing developers to choose the appropriate method based on their requirements.",
     author="Parth Mishra",
