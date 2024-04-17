@@ -1,6 +1,11 @@
 import msgspec
 import typing as t
-from pycodeforces.abc.__objects__ import Problem, Contest, RankListRow, ProblemStatistics
+from pycodeforces.abc.__objects__ import (
+    Problem,
+    Contest,
+    RankListRow,
+    ProblemStatistics,
+)
 
 
 class Standings(msgspec.Struct):

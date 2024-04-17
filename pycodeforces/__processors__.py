@@ -1,3 +1,4 @@
+import urllib.parse
 from pycodeforces.__clients__ import AsyncClient, SyncClient
 from pycodeforces.abc.__endpoints__ import CodeForcesAPI
 from pycodeforces.abc.__objects__ import (
@@ -36,6 +37,8 @@ import msgspec
 import random
 import typing as t
 import hashlib
+import urllib
+import collections
 
 
 class AsyncMethod:
@@ -82,9 +85,12 @@ class AsyncMethod:
             head = end_point_url.removeprefix(
                 f"https://codeforces.com/api/{method_name}?"
             )
-            to_hash = f"{randon_six_digit_num}/{method_name}?apiKey={self._auth_key}&{head}&time={self._time}#{self._secret}"
+            params = dict(x.split("=") for x in head.split("&"))
+            params = collections.OrderedDict(sorted(params.items()))
+            encoded_params = urllib.parse.urlencode(params, safe=";")
+            to_hash = f"{randon_six_digit_num}/{method_name}?apiKey={self._auth_key}&{encoded_params}&time={self._time}#{self._secret}"
             hashed_string = (hashlib.sha512(to_hash.encode("utf8"))).hexdigest()
-            final_url = f"https://codeforces.com/api/{method_name}?{head}&apiKey={self._auth_key}&time={self._time}&apiSig={randon_six_digit_num}{hashed_string}"
+            final_url = f"https://codeforces.com/api/{method_name}?{encoded_params}&apiKey={self._auth_key}&time={self._time}&apiSig={randon_six_digit_num}{hashed_string}"
             return final_url
         else:
             return end_point_url
@@ -596,9 +602,12 @@ class SyncMethod:
             head = end_point_url.removeprefix(
                 f"https://codeforces.com/api/{method_name}?"
             )
-            to_hash = f"{randon_six_digit_num}/{method_name}?apiKey={self._auth_key}&{head}&time={self._time}#{self._secret}"
+            params = dict(x.split("=") for x in head.split("&"))
+            params = collections.OrderedDict(sorted(params.items()))
+            encoded_params = urllib.parse.urlencode(params, safe=";")
+            to_hash = f"{randon_six_digit_num}/{method_name}?apiKey={self._auth_key}&{encoded_params}&time={self._time}#{self._secret}"
             hashed_string = (hashlib.sha512(to_hash.encode("utf8"))).hexdigest()
-            final_url = f"https://codeforces.com/api/{method_name}?{head}&apiKey={self._auth_key}&time={self._time}&apiSig={randon_six_digit_num}{hashed_string}"
+            final_url = f"https://codeforces.com/api/{method_name}?{encoded_params}&apiKey={self._auth_key}&time={self._time}&apiSig={randon_six_digit_num}{hashed_string}"
             return final_url
         else:
             return end_point_url
